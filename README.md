@@ -78,3 +78,11 @@ a visual flow. A visual flow is the best understandable representation at this p
 - publish json data with page when component is used
 
 
+## Needs attention
+The Q&a component design provides a progress indicator. This may be problematic in cases where the question
+tree has different depths depending on the path that is taken. Only when each path in the tree has the same depth,
+progress indication can be derived and computed from the number of questions that needs to be answered.
+
+- Implementation of the progress bar is extra work not contained in the list above.
+
+

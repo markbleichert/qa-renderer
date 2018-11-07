@@ -1,7 +1,7 @@
 import Runtime from './runtime';
 
 document.addEventListener("DOMContentLoaded", (event) => {
-    var runtime = new Runtime();
+    const runtime = new Runtime();
 
     document.getElementById("my-dialog").appendChild(runtime.renderDialog({
         "root": "1",
