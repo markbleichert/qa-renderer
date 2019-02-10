@@ -3,10 +3,18 @@ import { Runtime } from './index';
 import data from '../qa-data-config';
 
 describe('QARunner', () => {
-    test('should render first question', () => {
-        const runner = new Runtime();
+    let runner;
 
-        runner.renderDialog(data);
+    beforeEach(() => {
+        runner = new Runtime(data);
+    });
+
+    afterEach(() => {
+       runner = null;
+    });
+
+    test('should render first question', () => {
+        runner.renderDialog();
 
         expect(runner.currentNode).toBe(data.nodes[0]);
         expect(runner.currentNode.id).toEqual('1');
@@ -14,10 +22,7 @@ describe('QARunner', () => {
     });
 
     test('should render next question when answer is no', () => {
-        const runner = new Runtime();
-
-        runner.renderDialog(data);
-
+        runner.renderDialog();
         runner.moveNext('no');
 
         expect(runner.currentNode).toBe(data.nodes[1]);
@@ -26,10 +31,7 @@ describe('QARunner', () => {
     });
 
     test('should render endpoint when answer is yes', () => {
-        const runner = new Runtime();
-
-        runner.renderDialog(data);
-
+        runner.renderDialog();
         runner.moveNext('yes');
 
         expect(runner.currentNode).toBe(data.nodes[4]);

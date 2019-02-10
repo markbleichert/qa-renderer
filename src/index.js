@@ -16,17 +16,16 @@ function createContainer(id) {
 }
 
 class Runtime {
-    constructor(elementId) {
+    constructor(dialog, elementId) {
         this.elementId = elementId;
+        this.dialog = dialog;
     }
 
-    renderDialog(dialog, node) {
-        this.dialog = dialog;
-
+    renderDialog(node) {
         if (!node) {
-            for (let i = 0; i < dialog.nodes.length; i++) {
-                if (dialog.nodes[i].id === dialog.root) {
-                    node = dialog.nodes[i];
+            for (let i = 0; i < this.dialog.nodes.length; i++) {
+                if (this.dialog.nodes[i].id === this.dialog.root) {
+                    node = this.dialog.nodes[i];
                     break;
                 }
             }
@@ -123,7 +122,7 @@ class Runtime {
             }
 
             if (nextNode) {
-                this.renderDialog(this.dialog, nextNode);
+                this.renderDialog(nextNode);
             }
         }
     }
