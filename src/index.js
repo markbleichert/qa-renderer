@@ -53,7 +53,6 @@ class Runtime {
             this.renderEndpoint(node);
             break;
         default:
-            break;
         }
     }
 
