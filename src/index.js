@@ -19,31 +19,23 @@ class Runtime {
     constructor(dialog, elementId) {
         this.elementId = elementId;
         this.dialog = dialog;
+        this.el = createContainer(elementId);
+    }
+
+    getRootNode() {
+        return this.findNodeById(this.dialog.root);
+    }
+
+    start() {
+        this.renderDialog(this.getRootNode());
     }
 
     renderDialog(node) {
-        if (!node) {
-            for (let i = 0; i < this.dialog.nodes.length; i++) {
-                if (this.dialog.nodes[i].id === this.dialog.root) {
-                    node = this.dialog.nodes[i];
-                    break;
-                }
-            }
-        }
+        this.currentNode = node;
 
-        // create a container for this flow
-        if (!this.el) {
-            this.el = createContainer(this.elementId);
-        }
-
-        // clean container and set to current item
         this.reset(true);
 
         this.renderComponent(node);
-
-        this.currentNode = node;
-
-        return this.el;
     }
 
     reset(clean) {
@@ -101,6 +93,18 @@ class Runtime {
         this.el.appendChild(elEndpoint);
     }
 
+    findNodeById(id) {
+        let nextNode;
+        for (let i = 0; i < this.dialog.nodes.length; i++) {
+            const node = this.dialog.nodes[i];
+            if (node.id === id) {
+                nextNode = node;
+                break;
+            }
+        }
+        return nextNode;
+    }
+
     moveNext(optionId) {
         let connectorOut;
         for (let i = 0; i < this.dialog.connectors.length; i++) {
@@ -111,19 +115,10 @@ class Runtime {
             }
         }
 
-        if (connectorOut) {
-            let nextNode;
-            for (let i = 0; i < this.dialog.nodes.length; i++) {
-                const node = this.dialog.nodes[i];
-                if (node.id === connectorOut.target.id) {
-                    nextNode = node;
-                    break;
-                }
-            }
+        const nextNode = this.findNodeById(connectorOut.target.id);
 
-            if (nextNode) {
-                this.renderDialog(nextNode);
-            }
+        if (nextNode) {
+            this.renderDialog(nextNode);
         }
     }
 

@@ -3,7 +3,7 @@ export default {
     nodes: [{
         id: '1',
         type: 'Question',
-        question: 'Are you a dork?',
+        question: 'Do you believe you are a dork?',
         options: [{
             id: 'yes',
             text: 'Yes'
