@@ -1,175 +1,135 @@
-import Runtime from './runtime';
+function createElement(tagName, attrib = 'class', name) {
+    const el = document.createElement(tagName);
+    el.setAttribute(attrib, name);
 
-document.addEventListener("DOMContentLoaded", (event) => {
-    const runtime = new Runtime();
+    return el;
+}
 
-    document.getElementById("my-dialog").appendChild(runtime.renderDialog({
-        "root": "1",
-        "nodes": [{
-            "id": "1",
-            "type": "Question",
-            "question": "Are you a dork?",
-            "options": [{
-                "id": "yes",
-                "text": "Yes"
-            }, {
-                "id": "no",
-                "text": "No"
-            }]
-        }, {
-            "id": "2",
-            "type": "Question",
-            "question": "Are you a geek?",
-            "options": [{
-                "id": "yes",
-                "text": "Yes"
-            }, {
-                "id": "no",
-                "text": "No"
-            }]
-        }, {
-            "id": "3",
-            "type": "Question",
-            "question": "Are you a technology freak?",
-            "options": [{
-                "id": "yes",
-                "text": "Yes"
-            }, {
-                "id": "no",
-                "text": "No"
-            }]
-        }, {
-            "id": "4",
-            "type": "Question",
-            "question": "Do you have programming skills?",
-            "options": [{
-                "id": "expert",
-                "text": "expert"
-            }, {
-                "id": "some",
-                "text": "some"
-            }, {
-                "id": "no",
-                "text": "No"
-            }]
-        }, {
-            "id": "5",
-            "type": "Endpoint",
-            "content": "We do not employ dorks!"
-        }, {
-            "id": "6",
-            "type": "Endpoint",
-            "content": "Ok you are hired !"
-        }, {
-            "id": "7",
-            "type": "Endpoint",
-            "content": "Sorry bye!"
-        }, {
-            "id": "20",
-            "type": "Endpoint",
-            "content": "Go work for google then !"
-        }],
+function createContainer(id) {
+    let container = document.getElementById(id);
 
-        "connectors": [{
-            "id": "8",
-            "type": "connector",
-            "source": {
-                "id": "1",
-                "port": "no"
-            },
-            "target": {
-                "id": "2"
+    if (!container) {
+        container = createElement('div', 'id', id);
+        document.body.appendChild(container);
+    }
+    return container;
+}
+
+class Runtime {
+    constructor(elementId) {
+        this.elementId = elementId;
+    }
+
+    renderDialog(dialog, node) {
+        this.dialog = dialog;
+
+        if (!node) {
+            for (let i = 0; i < dialog.nodes.length; i++) {
+                if (dialog.nodes[i].id === dialog.root) {
+                    node = dialog.nodes[i];
+                    break;
+                }
             }
-        }, {
-            "id": "9",
-            "type": "connector",
-            "source": {
-                "id": "1",
-                "port": "yes"
-            },
-            "target": {
-                "id": "5"
+        }
+
+        // create a container for this flow
+        if (!this.el) {
+            this.el = createContainer(this.elementId);
+        }
+
+        // clean container and set to current item
+        this.reset(true);
+
+        this.renderComponent(node);
+
+        this.currentNode = node;
+
+        return this.el;
+    }
+
+    reset(clean) {
+        if (clean) {
+            this.el.textContent = '';
+        }
+    }
+
+    renderComponent(node) {
+        switch (node.type) {
+        case 'Question':
+            this.renderQuestion(node);
+            break;
+        case 'Endpoint':
+            this.renderEndpoint(node);
+            break;
+        default:
+            break;
+        }
+    }
+
+    renderOption(option) {
+        const elOption = createElement('button', 'class', 'option');
+        elOption.textContent = option.text;
+        elOption.setAttribute('data-option-id', option.id);
+
+        elOption.addEventListener('click', this.onOptionClick.bind(this));
+
+        return elOption;
+    }
+
+    renderQuestion(node) {
+        const elContent = createElement('div', 'class', 'content');
+        const elOptions = createElement('div', 'class', 'options');
+
+        for (let i = 0; i < node.options.length; i++) {
+            elOptions.appendChild(this.renderOption(node.options[i]));
+        }
+
+        const elQuestion = createElement('h3', 'class', 'question-header');
+        elQuestion.innerHTML = node.question;
+
+        elContent.appendChild(elQuestion);
+        elContent.appendChild(elOptions);
+
+        this.el.appendChild(elContent);
+    }
+
+    renderEndpoint(node) {
+        const elEndpoint = createElement('div', 'class', 'content');
+        const elContent = createElement('h2', 'class', 'content-header');
+        elContent.innerHTML = node.content;
+
+        elEndpoint.appendChild(elContent);
+        this.el.appendChild(elEndpoint);
+    }
+
+    onOptionClick(e) {
+        const elOption = e.target;
+        const optionId = elOption.getAttribute('data-option-id');
+
+        let connectorOut;
+        for (let i = 0; i < this.dialog.connectors.length; i++) {
+            const connector = this.dialog.connectors[i];
+            if (connector.source.id === this.currentNode.id && connector.source.port === optionId) {
+                connectorOut = connector;
+                break;
             }
-        }, {
-            "id": "10",
-            "type": "connector",
-            "source": {
-                "id": "2",
-                "port": "yes"
-            },
-            "target": {
-                "id": "3"
+        }
+
+        if (connectorOut) {
+            let nextNode;
+            for (let i = 0; i < this.dialog.nodes.length; i++) {
+                const node = this.dialog.nodes[i];
+                if (node.id === connectorOut.target.id) {
+                    nextNode = node;
+                    break;
+                }
             }
-        }, {
-            "id": "11",
-            "type": "connector",
-            "source": {
-                "id": "2",
-                "port": "no"
-            },
-            "target": {
-                "id": "4"
+
+            if (nextNode) {
+                this.renderDialog(this.dialog, nextNode);
             }
-        }, {
-            "id": "12",
-            "type": "connector",
-            "source": {
-                "id": "2",
-                "port": "yes"
-            },
-            "target": {
-                "id": "3"
-            }
-        }, {
-            "id": "13",
-            "type": "connector",
-            "source": {
-                "id": "3",
-                "port": "no"
-            },
-            "target": {
-                "id": "7"
-            }
-        }, {
-            "id": "14",
-            "type": "connector",
-            "source": {
-                "id": "3",
-                "port": "yes"
-            },
-            "target": {
-                "id": "4"
-            }
-        }, {
-            "id": "15",
-            "type": "connector",
-            "source": {
-                "id": "4",
-                "port": "no"
-            },
-            "target": {
-                "id": "7"
-            }
-        }, {
-            "id": "16",
-            "type": "connector",
-            "source": {
-                "id": "4",
-                "port": "some"
-            },
-            "target": {
-                "id": "6"
-            }
-        }, {
-            "id": "17",
-            "type": "connector",
-            "source": {
-                "id": "4",
-                "port": "expert"
-            },
-            "target": {
-                "id": "20"
-            }
-        }]
-    }));
-});
+        }
+    }
+}
+
+export { Runtime };

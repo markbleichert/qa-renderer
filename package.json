@@ -1,25 +1,55 @@
 {
-  "name": "test-app",
-  "version": "1.0.0",
-  "description": "test app",
-  "main": "index.js",
+  "name": "qa-renderer",
+  "version": "0.0.1",
+  "groupId": "nl.rabobank.dist.online",
+  "description": "Runtime used for displaying Q&A style dialogs",
+  "esnext": "dist/qa-renderer.js",
+  "module": "dist/qa-renderer.js",
+  "main": "dist/qa-renderer.min.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "webpack-dev-server --mode development --open",
-    "start": "webpack -p && node server.js"
+    "docs": "doccomentation --source 'src/**/*.js' --target 'README.md' --header 'Javascript API' --headerSize 3",
+    "test": "jest --config=jest.config.js --coverage --ci",
+    "build": "NODE_ENV=production ./node_modules/.bin/webpack",
+    "start": "NODE_ENV=development ./node_modules/.bin/webpack-dev-server --hot --config webpack.config.js",
+    "start:coverage": "MODE=test NODE_ENV=development SERVER_PATH='coverage' SERVER_PORT=8085 ENTRY_PATH='src/**/*.js' OUTPUT_PATH=test ENTRY_KEY='test' ./node_modules/.bin/webpack-dev-server --hot --config webpack.config.js",
+    "publish": "npm test && npm run build && tnl-publish --type project"
   },
-  "author": "mark",
+  "keywords": [
+    "Q/A",
+    "runtime",
+    "Tridion"
+  ],
+  "author": "Mark Bleichert",
   "license": "ISC",
   "dependencies": {
-    "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.5",
-    "babel-preset-env": "^1.7.0",
-    "css-loader": "^1.0.1",
-    "express-favicon": "^2.0.1",
-    "script-loader": "^0.7.2",
-    "style-loader": "^0.23.1",
-    "webpack": "^4.25.1",
+    "@tnl/tnl-utils": "latest",
+    "iterator": "0.0.0",
+    "save-dev": "^2.0.0",
+    "symbol": "^0.3.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.2.3",
+    "@tnl/tnl-publish": "latest",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-eslint": "^10.0.1",
+    "babel-jest": "^23.6.0",
+    "babel-loader": "^8.0.4",
+    "doccomentation": "^1.1.1",
+    "eslint": "^5.11.1",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-loader": "^2.1.1",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-react": "^7.12.1",
+    "jest": "^23.6.0",
+    "jsdom": "^13.1.0",
+    "regenerator-runtime": "^0.13.1",
+    "testcafe": "^0.23.3",
+    "webpack": "^4.28.2",
     "webpack-cli": "^3.1.2",
-    "webpack-dev-server": "^3.1.10"
+    "webpack-dev-server": "^3.1.14"
   }
 }
