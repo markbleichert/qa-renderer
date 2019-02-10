@@ -102,10 +102,7 @@ class Runtime {
         this.el.appendChild(elEndpoint);
     }
 
-    onOptionClick(e) {
-        const elOption = e.target;
-        const optionId = elOption.getAttribute('data-option-id');
-
+    moveNext(optionId) {
         let connectorOut;
         for (let i = 0; i < this.dialog.connectors.length; i++) {
             const connector = this.dialog.connectors[i];
@@ -129,6 +126,13 @@ class Runtime {
                 this.renderDialog(this.dialog, nextNode);
             }
         }
+    }
+
+    onOptionClick(e) {
+        const elOption = e.target;
+        const optionId = elOption.getAttribute('data-option-id');
+
+        this.moveNext(optionId);
     }
 }
 
