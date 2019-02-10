@@ -105,7 +105,7 @@ class Runtime {
         return nextNode;
     }
 
-    moveNext(optionId) {
+    findConnectorById(optionId) {
         let connectorOut;
         for (let i = 0; i < this.dialog.connectors.length; i++) {
             const connector = this.dialog.connectors[i];
@@ -114,7 +114,11 @@ class Runtime {
                 break;
             }
         }
+        return connectorOut;
+    }
 
+    moveNext(optionId) {
+        const connectorOut = this.findConnectorById(optionId);
         const nextNode = this.findNodeById(connectorOut.target.id);
 
         if (nextNode) {
