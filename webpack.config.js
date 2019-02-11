@@ -31,25 +31,6 @@ if (ENTRY_PATH.indexOf('*.') > -1) {
   ENTRY_PATH = path.resolve(...parsePath(ENTRY_PATH))
 }
 
-if (MODE === 'test') {
-  plugins.push({
-    apply: (compiler) => {
-      compiler.hooks.beforeCompile.tapAsync('TestReloader', (...args) => {
-        const callback = args.pop();
-        exec('npm test', (error, stdout, stderr) => {
-          const fs = require('fs');
-          if (stderr) {
-            fs.writeFileSync('coverage/errors.txt', stderr, 'utf8');
-          } else {
-            fs.writeFileSync('coverage/errors.txt', '', 'utf8');
-          }
-          callback();
-        });
-      });
-    }
-  });
-}
-
 const entry = {
   [ENTRY_KEY]: ENTRY_PATH
 };

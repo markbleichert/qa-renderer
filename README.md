@@ -8,7 +8,7 @@ Eventually we could make a visualition tool available in tridion that will allow
 a given flow. In the mvp version of the Q&A component the data will be created by hand according to the specifications of
 a visual flow. A visual flow is the best understandable representation at this point.
 
-![alt text](docs/qa-flow-visual.png "Data flow visualization")
+![alt text](qa-flow-visual.png "Data flow visualization")
 
 ## Data
 - Two or more questions are part of a flow that will lead to an endpoint.
